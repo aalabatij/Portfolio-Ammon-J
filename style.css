@@ -1,0 +1,138 @@
+/* style.css */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #faf9f7;
+  --card: #ffffff;
+  --border: #e8e2d9;
+  --foreground: #1c1917;
+  --muted: #78716c;
+  --primary: #b45309;
+  --primary-light: rgba(180, 83, 9, 0.10);
+  --primary-hover: #92400e;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--foreground);
+  line-height: 1.6;
+}
+
+/* NAVBAR */
+.navbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.navbar-brand {
+  font-family: Georgia, serif;
+  font-size: 1.25rem; font-weight: 700;
+  color: var(--primary); text-decoration: none;
+}
+.navbar-links { display: flex; gap: 32px; }
+.navbar-links a {
+  font-size: 0.9rem; font-weight: 500;
+  color: var(--muted); text-decoration: none;
+  transition: color 0.2s;
+}
+.navbar-links a:hover, .navbar-links a.active { color: var(--foreground); }
+.navbar-links a.active { border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+
+/* BUTTONS */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 8px;
+  background: var(--primary); color: #fff;
+  font-weight: 600; text-decoration: none; border: none;
+  cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 16px rgba(0,0,0,0.16); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 8px;
+  border: 1px solid var(--border); color: var(--foreground);
+  font-weight: 600; text-decoration: none; background: transparent;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-outline:hover { background: #f5f0ea; }
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
+
+/* SECTION LABELS */
+.eyebrow {
+  font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--primary); margin-bottom: 8px;
+}
+.section-title {
+  font-family: Georgia, serif;
+  font-size: 2.25rem; font-weight: 700;
+  color: var(--foreground); margin-bottom: 16px;
+}
+
+/* ICON BOX */
+.icon-box {
+  width: 48px; height: 48px; border-radius: 10px;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  color: var(--primary); font-size: 1.4rem;
+}
+
+/* FOOTER */
+.site-footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 40px 24px;
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: space-between; gap: 16px;
+}
+.footer-brand {
+  font-family: Georgia, serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--primary);
+}
+.footer-sub { color: var(--muted); font-size: 0.85rem; }
+.footer-icons { display: flex; gap: 16px; }
+.footer-icons a {
+  color: var(--muted); text-decoration: none;
+  font-size: 1.1rem; transition: color 0.2s;
+}
+.footer-icons a:hover { color: var(--primary); }
+.footer-copy {
+  text-align: center; color: var(--muted);
+  font-size: 0.78rem; margin-top: 24px;
+}
+
+/* TAG PILLS */
+.tag {
+  display: inline-block;
+  padding: 4px 14px; border-radius: 999px;
+  background: var(--primary-light);
+  color: var(--primary); font-size: 0.82rem; font-weight: 500;
+  border: 1px solid rgba(180,83,9,0.2);
+}
+
+/* GRID HELPERS */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.text-center { text-align: center; }
+section { padding: 80px 0; }

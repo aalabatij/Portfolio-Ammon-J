@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ammon Jessop | Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="scratch.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="scratch.html" class="navbar-brand">Ammon Jessop</a>
+    <div class="navbar-links">
+      <a href="scratch.html" class="active">Home</a>
+      <a href="resume.html">Resume</a>
+      <a href="guitar.html">Guitar</a>
+      <a href="snake.html">Snake</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-avatar">
+      <img src="ammon.jpg" alt="Ammon Jessop" onerror="this.src='https://via.placeholder.com/112'">
+    </div>
+    <p class="eyebrow">Welcome</p>
+    <h1>Ammon Jessop</h1>
+    <p class="hero-sub">
+      Pre-Business student at Brigham Young University, specializing in
+      Information Systems. Teacher. Leader. Musician.
+    </p>
+    <div class="hero-tags">
+      <span class="tag">BYU</span>
+      <span class="tag">Information Systems</span>
+      <span class="tag">Pre-Business</span>
+    </div>
+    <div class="hero-buttons">
+      <a href="resume.html" class="btn-primary">View Resume</a>
+      <a href="mailto:aalabatij@gmail.com" class="btn-outline"><i class="fa fa-envelope"></i> Contact Me</a>
+      <a href="#guitar-scale-finder" class="btn-outline"><i class="fa fa-music"></i> Guitar Scale Finder</a>
+    </div>
+    <a href="#about" class="chevron" aria-label="Scroll down"><i class="fa fa-chevron-down"></i></a>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 56px;">
+        <p class="eyebrow">About Me</p>
+        <h2 class="section-title">A Little About Me</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon-box">📖</div>
+          <h3 class="card-title">Education</h3>
+          <p class="card-body">Pursuing a Pre-Business degree with a focus on Information Systems at BYU. Passionate about the intersection of technology and business.</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">💼</div>
+          <h3 class="card-title">Work</h3>
+          <p class="card-body">Currently working as a Language Teacher for The Church of Jesus Christ of Latter-day Saints, developing curriculum and teaching with clarity and empathy.</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🎸</div>
+          <h3 class="card-title">Passion</h3>
+          <p class="card-body">An avid guitarist who loves learning new chord progressions and styles — from folk to classical. Music fuels creativity and keeps me balanced.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="skills-section">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 48px;">
+        <p class="eyebrow">Skills</p>
+        <h2 class="section-title">What I Bring to the Table</h2>
+      </div>
+      <div class="grid-4">
+        <div class="skill-card"><p>Microsoft Excel</p></div>
+        <div class="skill-card"><p>Public Speaking</p></div>
+        <div class="skill-card"><p>Educational Leadership</p></div>
+        <div class="skill-card"><p>Language Teaching</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLEAU -->
+  <section id="guitar-scale-finder">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 40px;">
+        <p class="eyebrow">Data</p>
+        <h2 class="section-title">Guitar Scale Finder</h2>
+        <p style="color: var(--muted); max-width: 520px; margin: 0 auto; font-size: 0.9rem;">
+          An interactive Tableau visualization to explore guitar scales across the fretboard.
+          Select a key and scale type to see the notes light up.
+        </p>
+      </div>
+      <div class="tableau-wrap">
+        <div class='tableauPlaceholder' id='viz1776908132408' style='position: relative'>
+          <noscript>
+            <a href='#'><img alt='Guitar Scale Finder'
+              src='https://public.tableau.com/static/images/Gu/GuitarScaleFinderDesktop/GuitarScaleFinder/1_rss.png'
+              style='border: none' /></a>
+          </noscript>
+          <object class='tableauViz' style='display:none;'>
+            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+            <param name='embed_code_version' value='3' />
+            <param name='site_root' value='' />
+            <param name='name' value='GuitarScaleFinderDesktop/GuitarScaleFinder' />
+            <param name='tabs' value='no' />
+            <param name='toolbar' value='no' />
+            <param name='animate_transition' value='yes' />
+            <param name='display_static_image' value='yes' />
+            <param name='display_spinner' value='yes' />
+            <param name='display_overlay' value='yes' />
+            <param name='display_count' value='yes' />
+            <param name='language' value='en-US' />
+          </object>
+        </div>
+        <script type='text/javascript'>
+          var divElement = document.getElementById('viz1776908132408');
+          var vizElement = divElement.getElementsByTagName('object')[0];
+          vizElement.style.width = '100%'; vizElement.style.height = '700px';
+          var scriptElement = document.createElement('script');
+          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+          vizElement.parentNode.insertBefore(scriptElement, vizElement);
+        </script>
+      </div>
+      <p class="tableau-source">Source: <a href="https://public.tableau.com/app/profile/tableau.for.music/viz/GuitarScaleFinderDesktop/GuitarScaleFinder" target="_blank">Guitar Scale Finder on Tableau Public</a></p>
+    </div>
+  </section>
+
+  <!-- EXPLORE -->
+  <section style="background: rgba(245,240,234,0.5);">
+    <div class="container">
+      <div class="text-center" style="margin-bottom: 48px;">
+        <p class="eyebrow">Explore</p>
+        <h2 class="section-title">More Pages</h2>
+      </div>
+      <div class="grid-2">
+        <a href="resume.html" class="explore-card">
+          <div class="card">
+            <div class="icon-box">💼</div>
+            <h3>Resume</h3>
+            <p>View my full professional resume — education, experience, and skills in one place.</p>
+          </div>
+        </a>
+        <a href="guitar.html" class="explore-card">
+          <div class="card">
+            <div class="icon-box">🎸</div>
+            <h3>My Guitar Page</h3>
+            <p>A hand-crafted page about my love for the guitar — history, styles, videos and more.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONNECT -->
+  <section class="connect-section">
+    <div class="container text-center">
+      <p class="eyebrow">Connect</p>
+      <h2 class="section-title">Connect With Me</h2>
+      <p>Feel free to reach out through any of the links below.</p>
+      <div>
+        <a href="https://www.linkedin.com/in/ammon-jessop-0606b632b/" target="_blank" class="connect-btn">
+          <i class="fab fa-linkedin"></i> LinkedIn
+        </a>
+        <a href="https://www.instagram.com/ammonjessop/" target="_blank" class="connect-btn">
+          <i class="fab fa-instagram"></i> Instagram
+        </a>
+        <a href="mailto:aalabatij@gmail.com" class="connect-btn">
+          <i class="fa fa-envelope"></i> Email Me
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-brand">Ammon Jessop</span>
+      <span class="footer-sub">Pre-Business | Information Systems | BYU</span>
+      <div class="footer-icons">
+        <a href="mailto:aalabatij@gmail.com" aria-label="Email"><i class="fa fa-envelope"></i></a>
+        <a href="https://www.linkedin.com/in/ammon-jessop-0606b632b/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="https://www.instagram.com/ammonjessop/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <p class="footer-copy">&copy; 2026 Ammon Jessop. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

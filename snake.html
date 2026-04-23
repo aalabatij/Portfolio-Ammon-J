@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake | Ammon Jessop</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: var(--bg); }
+    .snake-nav {
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px; display: flex; align-items: center;
+    }
+    .snake-nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+    .snake-nav a:hover { color: var(--foreground); }
+    .snake-nav span { font-family: Georgia, serif; font-weight: 700; font-size: 1.1rem; margin-left: auto; }
+
+    .game-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+    .scoreboard { display: flex; justify-content: space-between; width: 100%; max-width: 400px; margin-bottom: 12px; }
+    .score-box { text-align: center; }
+    .score-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+    .score-val { font-size: 1.75rem; font-weight: 700; color: var(--primary); }
+    .score-val.best { color: var(--foreground); }
+
+    canvas { display: block; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 8px 40px rgba(0,0,0,0.25); }
+
+    .dpad { display: grid; grid-template-columns: repeat(3, 40px); grid-template-rows: repeat(3, 40px); gap: 6px; margin-top: 24px; }
+    .dpad-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      font-size: 1.1rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+      user-select: none;
+    }
+    .dpad-btn:active { background: var(--primary-light); transform: scale(0.92); }
+    .dpad-center { background: var(--primary-light); border-color: rgba(180,83,9,0.2); cursor: default; }
+  </style>
+</head>
+<body>
+
+  <div class="snake-nav">
+    <a href="scratch.html">← Portfolio</a>
+    <span>Snake 🐍</span>
+  </div>
+
+  <div class="game-wrap">
+    <div class="scoreboard" id="scoreboard" style="display:none;">
+      <div class="score-box">
+        <div class="score-label">Score</div>
+        <div class="score-val" id="score-display">0</div>
+      </div>
+      <div class="score-box">
+        <div class="score-label">Best</div>
+        <div class="score-val best" id="best-display">0</div>
+      </div>
+    </div>
+
+    <div style="position:relative;">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+      <div id="overlay" style="position:absolute;inset:0;border-radius:12px;background:rgba(17,24,39,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;"></div>
+    </div>
+
+    <div class="dpad" id="dpad" style="display:none;">
+      <div></div>
+      <button class="dpad-btn" id="btn-up">↑</button>
+      <div></div>
+      <button class="dpad-btn" id="btn-left">←</button>
+      <div class="dpad-btn dpad-center"><div style="width:8px;height:8px;border-radius:50%;background:rgba(180,83,9,0.4);"></div></div>
+      <button class="dpad-btn" id="btn-right">→</button>
+      <div></div>
+      <button class="dpad-btn" id="btn-down">↓</button>
+      <div></div>
+    </div>
+  </div>
+
+  <script>
+    const COLS = 20, ROWS = 20, CELL = 20;
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('overlay');
+    const scoreboard = document.getElementById('scoreboard');
+    const dpad = document.getElementById('dpad');
+
+    let snake, dir, nextDir, food, score, best = 0, running = false, intervalId = null;
+    let currentSpeed = 130;
+    let phase = 'menu';
+    let touchStart = null;
+
+    const SPEEDS = { slow: 200, normal: 130, fast: 80 };
+
+    function rand(snake) {
+      let p;
+      do { p = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) }; }
+      while (snake.some(s => s.x === p.x && s.y === p.y));
+      return p;
+    }
+
+    function opposite(a, b) { return a.x === -b.x && a.y === -b.y; }
+
+    function draw() {
+      ctx.fillStyle = '#111827'; ctx.fillRect(0, 0, 400, 400);
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 0.5;
+      for (let i = 0; i <= COLS; i++) { ctx.beginPath(); ctx.moveTo(i*CELL,0); ctx.lineTo(i*CELL,400); ctx.stroke(); }
+      for (let j = 0; j <= ROWS; j++) { ctx.beginPath(); ctx.moveTo(0,j*CELL); ctx.lineTo(400,j*CELL); ctx.stroke(); }
+
+      snake.forEach((seg, i) => {
+        const isHead = i === 0;
+        const t = i / Math.max(snake.length - 1, 1);
+        ctx.fillStyle = isHead ? '#d97706' : `rgb(${Math.round(180-t*60)},${Math.round(100+t*20)},10)`;
+        const pad = isHead ? 1 : 2;
+        ctx.beginPath();
+        ctx.roundRect
+          ? ctx.roundRect(seg.x*CELL+pad, seg.y*CELL+pad, CELL-pad*2, CELL-pad*2, isHead?5:3)
+          : ctx.rect(seg.x*CELL+pad, seg.y*CELL+pad, CELL-pad*2, CELL-pad*2);
+        ctx.fill();
+        if (isHead) {
+          ctx.fillStyle = '#111827';
+          const cx = seg.x*CELL+CELL/2, cy = seg.y*CELL+CELL/2;
+          ctx.beginPath(); ctx.arc(cx+dir.x*3-dir.y*3, cy+dir.y*3-dir.x*3, 2, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx+dir.x*3+dir.y*3, cy+dir.y*3+dir.x*3, 2, 0, Math.PI*2); ctx.fill();
+        }
+      });
+
+      ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 12; ctx.fillStyle = '#ef4444';
+      ctx.beginPath(); ctx.arc(food.x*CELL+CELL/2, food.y*CELL+CELL/2, CELL/2-3, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function tick() {
+      if (!running) return;
+      dir = { ...nextDir };
+      const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+      if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS || snake.some(s => s.x === head.x && s.y === head.y)) {
+        running = false; clearInterval(intervalId);
+        best = Math.max(best, score);
+        document.getElementById('best-display').textContent = best;
+        showGameOver(); return;
+      }
+      const ate = head.x === food.x && head.y === food.y;
+      snake = [head, ...snake];
+      if (!ate) snake.pop();
+      else { food = rand(snake); score += 10; document.getElementById('score-display').textContent = score; }
+      draw();
+    }
+
+    function startGame(spd) {
+      clearInterval(intervalId);
+      currentSpeed = SPEEDS[spd] || 130;
+      snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+      dir = {x:1,y:0}; nextDir = {x:1,y:0};
+      food = rand(snake); score = 0;
+      document.getElementById('score-display').textContent = 0;
+      running = true; phase = 'playing';
+      overlay.style.display = 'none';
+      scoreboard.style.display = 'flex';
+      dpad.style.display = 'grid';
+      draw();
+      intervalId = setInterval(tick, currentSpeed);
+    }
+
+    function showMenu() {
+      phase = 'menu';
+      overlay.style.display = 'flex';
+      scoreboard.style.display = 'none';
+      dpad.style.display = 'none';
+      overlay.innerHTML = `
+        <div style="font-size:3rem;margin-bottom:12px;">🐍</div>
+        <h2 style="font-family:Georgia,serif;font-size:1.75rem;font-weight:700;margin-bottom:6px;">Snake</h2>
+        <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;margin-bottom:24px;">Eat the red dots. Don't hit the walls!</p>
+        <div style="display:flex;gap:8px;margin-bottom:24px;" id="speed-btns">
+          <button onclick="selectSpeed('slow')" id="spd-slow" class="spd-btn" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);background:transparent;cursor:pointer;font-size:0.85rem;font-weight:600;">Slow</button>
+          <button onclick="selectSpeed('normal')" id="spd-normal" class="spd-btn" style="padding:8px 16px;border-radius:8px;border:1px solid #d97706;background:#b45309;color:#fff;cursor:pointer;font-size:0.85rem;font-weight:600;">Normal</button>
+          <button onclick="selectSpeed('fast')" id="spd-fast" class="spd-btn" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);background:transparent;cursor:pointer;font-size:0.85rem;font-weight:600;">Fast</button>
+        </div>
+        <button onclick="startGame(selectedSpeed)" style="padding:12px 48px;border-radius:12px;background:#b45309;border:none;color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;">Play</button>
+        <p style="color:rgba(255,255,255,0.25);font-size:0.75rem;margin-top:16px;">Arrow keys · WASD · Swipe</p>`;
+    }
+
+    let selectedSpeed = 'normal';
+    window.selectSpeed = function(spd) {
+      selectedSpeed = spd;
+      ['slow','normal','fast'].forEach(s => {
+        const btn = document.getElementById('spd-'+s);
+        if (btn) btn.style.cssText = s === spd
+          ? 'padding:8px 16px;border-radius:8px;border:1px solid #d97706;background:#b45309;color:#fff;cursor:pointer;font-size:0.85rem;font-weight:600;'
+          : 'padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);background:transparent;cursor:pointer;font-size:0.85rem;font-weight:600;';
+      });
+    };
+
+    function showGameOver() {
+      phase = 'over';
+      overlay.style.display = 'flex';
+      const newBest = score > 0 && score >= best;
+      overlay.innerHTML = `
+        <div style="font-size:2.5rem;margin-bottom:10px;">💀</div>
+        <h2 style="font-family:Georgia,serif;font-size:1.75rem;font-weight:700;margin-bottom:6px;">Game Over</h2>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.88rem;margin-bottom:4px;">Score: <span style="color:#fbbf24;font-weight:700;">${score}</span></p>
+        ${newBest ? '<p style="color:#fbbf24;font-weight:600;font-size:0.88rem;margin-bottom:12px;">🏆 New High Score!</p>' : ''}
+        <button onclick="startGame(selectedSpeed)" style="margin-top:12px;padding:12px 48px;border-radius:12px;background:#b45309;border:none;color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;">Play Again</button>
+        <button onclick="showMenu()" style="margin-top:8px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:0.88rem;cursor:pointer;">Change Speed</button>`;
+    }
+
+    // Keyboard controls
+    const KEY_DIR = {
+      ArrowUp:{x:0,y:-1}, w:{x:0,y:-1},
+      ArrowDown:{x:0,y:1}, s:{x:0,y:1},
+      ArrowLeft:{x:-1,y:0}, a:{x:-1,y:0},
+      ArrowRight:{x:1,y:0}, d:{x:1,y:0},
+    };
+    document.addEventListener('keydown', e => {
+      if (phase !== 'playing') {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startGame(selectedSpeed); }
+        return;
+      }
+      const d = KEY_DIR[e.key]; if (!d) return; e.preventDefault();
+      if (!opposite(d, dir)) nextDir = d;
+    });
+
+    // Touch swipe
+    canvas.addEventListener('touchstart', e => { touchStart = {x:e.touches[0].clientX, y:e.touches[0].clientY}; });
+    canvas.addEventListener('touchend', e => {
+      if (!touchStart || phase !== 'playing') return;
+      const dx = e.changedTouches[0].clientX - touchStart.x;
+      const dy = e.changedTouches[0].clientY - touchStart.y;
+      if (Math.abs(dx) < 15 && Math.abs(dy) < 15) return;
+      const d = Math.abs(dx) > Math.abs(dy)
+        ? (dx > 0 ? {x:1,y:0} : {x:-1,y:0})
+        : (dy > 0 ? {x:0,y:1} : {x:0,y:-1});
+      if (!opposite(d, dir)) nextDir = d;
+    });
+
+    // D-pad buttons
+    function tap(d) { if (phase !== 'playing') return; if (!opposite(d, dir)) nextDir = d; }
+    document.getElementById('btn-up').addEventListener('pointerdown', () => tap({x:0,y:-1}));
+    document.getElementById('btn-down').addEventListener('pointerdown', () => tap({x:0,y:1}));
+    document.getElementById('btn-left').addEventListener('pointerdown', () => tap({x:-1,y:0}));
+    document.getElementById('btn-right').addEventListener('pointerdown', () => tap({x:1,y:0}));
+
+    // Init
+    showMenu();
+    draw();
+  </script>
+</body>
+</html>
